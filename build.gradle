@@ -1,0 +1,39 @@
+/**
+ * 常用命令：
+ * 1、tasks 列出项目可运行的Task
+ * 2、assemble 打包输出项目
+ * 3、bootRepackage 打包可以通过‘java -jar’命令执行的Jar或War包
+ * 4、build 测试并打包输出
+ * 5、clean 删除build目录
+ * 6、jar 打Jar包
+ * 7、javadoc 打Javadoc包
+ * 8、dependencies 显示项目的所有依赖关系
+ * 9、uploadArchives 上传‘:archives’中配置的所有包到Maven仓库
+ */
+
+ // buildscript不能抽取出来，只能复写
+ buildscript {
+ 	ext {
+ 		gradleHome = "https://raw.githubusercontent.com/yangziran/gradle-scripts/master/"
+ 	}
+ 	apply from: gradleHome + 'maven.gradle'
+ 	repositories {
+ 		maven { url REPOSITORY_URL }
+ 	}
+ }
+
+ subprojects {
+ 	apply from: gradleHome + 'maven.gradle'
+ 	apply from: gradleHome + 'java.gradle'
+
+ 	// 设置版本
+ 	version = '1.0.0'
+ 	// 设置Group Id
+ 	group = 'cn.kunter.demo'
+ 	// 设置描述
+ 	description = 'Deom'
+
+ 	dependencies {
+
+ 	}
+ }

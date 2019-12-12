@@ -1,0 +1,46 @@
+/**
+ * Maven仓库配置，将请求公网的中央库替换为私有库。
+ * 使用方法：在根项目的build.gradle中增加如下代码，进行导入：
+ * ext {
+ *     gradleHome = "https://raw.githubusercontent.com/yangziran/gradle-scripts/master/"
+ * }
+ * apply from: gradleHome + 'maven.gradle'
+ */
+
+ apply plugin: 'maven'
+
+ ext {
+ 	REPOSITORY_HOME = 'http://maven.aliyun.com'
+ 	REPOSITORY_URL = REPOSITORY_HOME + "/nexus/content/groups/public"
+ }
+
+ allprojects {
+ 	// 使用mavenCentral()时，将远程的仓库替换为自己搭建的仓库
+ 	repositories {
+ 		all { ArtifactRepository repo ->
+ 			if (repo instanceof MavenArtifactRepository) {
+ 				def url = repo.url.toString()
+ 				if (url.startsWith('https://repo1.maven.org/maven2') || url.startsWith('https://jcenter.bintray.com/')) {
+ 					project.logger.lifecycle "Repository ${repo.url} replaced by $REPOSITORY_URL."
+ 					remove repo
+ 				}
+ 			}
+ 		}
+ 		maven {
+ 			url REPOSITORY_URL
+ 		}
+ 	}
+
+ 	uploadArchives {
+ 		repositories {
+ 			mavenDeployer {
+ 				snapshotRepository (url: REPOSITORY_HOME + "/nexus/content/repositories/snapshots/") {
+ 					authentication (userName: 'xxx', password: 'xxx')
+ 				}
+ 				repository (url: REPOSITORY_HOME + "/nexus/content/repositories/releases/") {
+ 					authentication (userName: 'xxx', password: 'xxx')
+ 				}
+ 			}
+ 		}
+ 	}
+ }
